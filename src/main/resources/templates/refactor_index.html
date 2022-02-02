@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/general :: head"></head>
+<body style="padding-top: 3em">
+<div class="ui very padded container segment">
+
+    <div th:replace="fragments/general :: navigation(active='refactor')">
+    </div>
+
+    <div th:if="${message}">
+        <h2 th:text="${message}"></h2>
+    </div>
+
+    <div>
+        <form
+                action="/refactor-from-file"
+                class="ui form"
+                enctype="multipart/form-data"
+                method="POST"
+        >
+            <div class="field">
+                <label>File to refactor:</label>
+                <input required name="Source" type="file"/>
+            </div>
+
+            <button class="ui button primary" type="submit">Display MDSL and Select Refactoring</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

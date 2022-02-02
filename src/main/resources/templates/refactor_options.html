@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/general :: head"></head>
+<body style="padding-top: 3em">
+
+<!-- This invisible form is used for the "transform" step. -->
+<form action="/load-and-show-mdsl-from-string" enctype="multipart/form-data" id="transform-from-string" method="POST">
+    <input name="Source" th:value="${mdsl}" type="hidden">
+    <input name="SourceFileName" th:value="${mdslInputFileName}" type="hidden">
+</form>
+
+<!-- This invisible form is used for the "download" step. -->
+<form action="/download" enctype="multipart/form-data" id="download-mdsl" method="POST">
+    <input name="Source" th:value="${mdsl}" type="hidden">
+    <input name="Target" th:value="${T(io.mdsl.web.interfaces.dto.TargetFormat).MDSL}" type="hidden">
+    <input name="SourceFileName" th:value="${mdslInputFileName}" type="hidden">
+</form>
+
+<!-- The modal dialog for the edit button: -->
+<form action="/refactor-from-string" class="ui modal form" enctype="multipart/form-data" method="POST">
+    <input name="SourceFileName" th:value="${mdslInputFileName}" type="hidden">
+    <div class="header">Edit MDSL</div>
+    <div class="scrolling content">
+        <div class="field">
+            <label>MDSL</label>
+            <textarea style="font-family: monospace" rows="25" name="Source" th:text="${mdsl}"></textarea>
+        </div>
+    </div>
+    <div class="actions">
+        <button class="ui primary approve button" type="submit">Apply Changes</button>
+        <div class="ui cancel button">Cancel</div>
+    </div>
+</form>
+
+<form action="/refactor/perform" class="ui very padded container segment" id="perform-refactoring" method="post">
+    <div th:replace="fragments/general :: navigation(active='refactor')">
+    </div>
+
+    <div th:if="${message}">
+        <h2 th:text="${message}"></h2>
+    </div>
+
+    <div class="ui form">
+        <button class="tiny ui labeled icon right floated button" form="download-mdsl" type="submit">
+            <i class="download icon"></i>Download
+        </button>
+        <div th:replace="fragments/general :: copyToClipboardButton(id='mdsl-display-area')">
+        </div>
+        <button class="tiny ui labeled icon right floated button" id="edit" type="button">
+            <i class="edit icon"></i>Edit
+        </button>
+        <h3 class="ui header">Input MDSL specification (<span th:text="${mdslInputFileName}"></span>): </h3>
+
+        <div th:replace="fragments/mdsl :: showMdsl(mdsl=${mdsl})">
+        </div>
+
+        <input name="Source" th:value="${mdsl}" type="hidden">
+
+        <div class="endpoint field" style="display: none">
+            <label>Target Endpoint:</label>
+            <div class="ui dropdown endpoint selection">
+                <input name="TargetEndpoint" type="hidden">
+                <i class="dropdown icon"></i>
+                <div class="text">Default Value</div>
+            </div>
+        </div>
+
+        <div class="operation field" style="display: none">
+            <label>Target Operation:</label>
+            <div class="ui dropdown operation selection">
+                <input name="TargetOperation" type="hidden">
+                <i class="dropdown icon"></i>
+                <div class="text">Default Value</div>
+            </div>
+        </div>
+
+        <div class="refactoring field" style="display: none">
+            <label>Refactoring/Transformation (Reference: <a href="https://interface-refactoring.github.io/refactorings"
+                                                             target="_blank">Interface Refactoring Catalog</a>, <a
+                    href="https://microservice-api-patterns.github.io/MDSL-Specification/soad.html" target="_blank">MDSL
+                Transformations</a>):</label>
+            <div class="ui dropdown refactoring selection">
+                <input name="Refactoring" type="hidden">
+                <i class="dropdown icon"></i>
+                <div class="text">Default Value</div>
+            </div>
+        </div>
+
+        <input name="SourceFileName" th:value="${mdslInputFileName}" type="hidden">
+
+        <div class="ui buttons" style="width: 100%">
+            <button class="ui labeled icon primary button" form="perform-refactoring" type="submit">
+                <i class="recycle icon"></i>Refactor/Transform
+            </button>
+            <button class="ui right labeled icon button" form="transform-from-string" type="submit">
+                <i class="chevron right icon"></i>Move to IDL Generation and Download
+            </button>
+        </div>
+    </div>
+</form>
+<script th:inline="javascript">
+
+    $('#perform-refactoring')
+        .form({
+            fields: {
+                Refactoring : ['exactCount[1]']
+            }
+        })
+    ;
+
+    var refactorings = [{
+        name: "Add Endpoint with Operations for First Scenario and its First Story",
+        value: "AddEndpointForScenario",
+        // select this by default if we don't have any endpoints yet
+        selected: !hasEndpoints,
+        target: "Story"
+    }, {
+        name: "Decorate as Processing Resource",
+        value: "AddMAPDecoratorPR",
+        target: "Endpoint"
+    }, {
+        name: "Decorate as Information Holder Resource",
+        value: "AddMAPDecoratorIHR",
+        target: "Endpoint"
+    }, {
+        name: "Decorate as Collection Resource",
+        value: "AddMAPDecoratorCR",
+        target: "Endpoint"
+    }, {
+        name: "Add Operations Common/Typical for Role Stereotype(s)",
+        value: "AddOperationsForDecorator",
+        target: "Endpoint"
+    }, {
+        name: "Add Event Management Operations for Received Events",
+        value: "AddEventManagementOperationsForReceivedEvents",
+        target: "Endpoint"
+    }, {
+        name: "Move Operation",
+        value: "MoveOperation",
+        target: "Operation"
+    }, {
+        name: "Split Operation",
+        value: "SplitOperation",
+        target: "Operation"
+    }, {
+        name: "Extract Endpoint",
+        value: "ExtractEndpoint",
+        target: "Operation"
+    }, {
+        name: "Segregate Commands from Queries",
+        value: "SegregateCommandsfromQueries",
+        target: "Endpoint"
+    }, {
+        name: "Wrap Atomic Parameter(s) in Request/Response in Parameter Tree",
+        value: "WrapInParameterTree",
+        target: "Operation"
+    }, {
+        name: "Wrap Atomic Parameter in Request/Response in Key-Value Map",
+        value: "WrapInKeyValueMap",
+        target: "Operation"
+    }, {
+        name: "Introduce Pagination",
+        value: "IntroducePagination",
+        target: "Operation"
+    }, {
+        name: "Add Wish List",
+        value: "IntroduceWishList",
+        target: "Operation"
+    }, {
+        name: "Add Wish Template (or upgrade Wish List)",
+        value: "AddWishTemplate",
+        target: "Operation"
+    }, {
+        name: "Extract Information Holder",
+        value: "ExtractInformationHolder",
+        target: "Operation"
+    }, {
+        name: "Inline Information Holder",
+        value: "InlineInformationHolder",
+        target: "Operation"
+    },{
+        name: "Bundle Requests",
+        value: "IntroduceRequestBundle",
+        target: "Operation"
+    }, {
+        name: "Add Context Representation",
+        value: "AddContextRepresentation",
+        target: "Operation"
+    },{
+        name: "Make Request Conditional",
+        value: "MakeRequestConditional",
+        target: "Operation"
+    },{
+        name: "Complete Data Types",
+        value: "CompleteDataTypes",
+        target: "Operation"
+    },{
+        name: "Convert Inline Payload Type to Type Reference",
+        value: "ConvertInlineTypeToTypeReference",
+        target: "Operation"
+    },{
+        name: "Add HTTP Binding",
+        value: "AddHTTPBinding",
+        target: "Endpoint"
+    },{
+        name: "Add URI Template To Existing HTTP Resource",
+        value: "AddURITemplateToExistingHttpResource",
+        target: "Operation"
+    },{
+        name: "Add HTTP Resource For URI Template",
+        value: "AddHttpResourceForURITemplate",
+        target: "Operation"
+    },{
+        name: "Add HTTP Resource During Binding Split",
+        value: "AddHttpResourceDuringBindingSplit",
+        target: "Operation"
+    },{
+        name: "Apply All Transformations and Refactorings to All Story Scenarios",
+        value: "ApplyAll",
+        target: "Story"
+    }]
+
+    var genModelJson = JSON.parse(/*[[${target}]]*/ []);
+
+    var hasEndpoints = genModelJson.endpoints.length > 0;
+
+    function showRefactorings(...targets) {
+        var applicableRefactorings = refactorings.filter(refactoring => {
+            return targets.indexOf(refactoring.target) >= 0;
+        })
+
+        $('.ui.dropdown.refactoring')
+            .dropdown({
+                placeholder: "Select the transformation or refactoring to perform:",
+                values: applicableRefactorings
+            })
+        ;
+        $('.refactoring.field').show();
+    }
+
+    function initializeAndShowOperations(selectedEndpoint) {
+        var operations = genModelJson.endpoints.filter(e => e.name === selectedEndpoint)[0].operations;
+        var hasSingleOperation = operations.length == 1;
+        $('.ui.dropdown.operation')
+            .dropdown({
+                placeholder: "Select the operation to refactor:",
+                clearable: true,
+                values: operations.map(e => ({name: e.name, value: e.name, selected: hasSingleOperation})),
+                onChange: function (selected) {
+                    if (selected) {
+                        showRefactorings("Endpoint", "Operation");
+                    } else {
+                        // Called when the user removed a previously selected operation:
+                        showRefactorings("Endpoint");
+                    }
+                }
+            })
+        ;
+        $('.operation.field').show();
+        if (hasSingleOperation) {
+            // If there's just a single operation, we can show all refactorings:
+            showRefactorings("Endpoint", "Operation");
+        } else {
+            // Otherwise, show refactorings that only need an endpoint
+            showRefactorings("Endpoint");
+        }
+    }
+
+    function initializeAndShowEndpoints() {
+        var hasSingleEndpoint = genModelJson.endpoints.length == 1;
+        $('.ui.dropdown.endpoint')
+            .dropdown({
+                placeholder: "Select the endpoint to transform/refactor:",
+                values: genModelJson.endpoints.map(e => ({name: e.name, value: e.name, selected: hasSingleEndpoint})),
+                onChange: function (selectedEndpoint) {
+                    if (selectedEndpoint) {
+                        initializeAndShowOperations(selectedEndpoint);
+                    }
+                }
+            })
+        ;
+        $('.endpoint.field').show();
+        if (hasSingleEndpoint) {
+            // If there's just a single endpoint, we can show the operations:
+            initializeAndShowOperations(genModelJson.endpoints[0].name);
+        }
+    }
+
+    if (hasEndpoints) {
+        initializeAndShowEndpoints();
+    } else {
+        // If there are no endpoints yet, we show the refactorings that work with stories instead:
+        showRefactorings("Story");
+    }
+
+    $("#edit").click(() => $('.ui.modal').modal('show'))
+</script>
+</body>
+</html>

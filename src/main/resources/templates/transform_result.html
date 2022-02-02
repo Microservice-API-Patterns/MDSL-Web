@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/general :: head"></head>
+<body style="padding-top: 3em">
+
+<!-- This invisible form is used for the "download" step. -->
+<form action="/download" enctype="multipart/form-data" id="download" method="POST">
+    <input name="Source" th:value="${mdsl}" type="hidden">
+    <input name="Target" th:value="${targetFormat}" type="hidden">
+    <input name="SourceFileName" th:value="${mdslInputFileName}" type="hidden">
+    <input name="FreemarkerTemplate" th:value="${freemarkerTemplate}" type="hidden">
+</form>
+
+<!-- This invisible form is used for the "download mdsl" button. -->
+<form action="/download" enctype="multipart/form-data" id="download-mdsl" method="POST">
+    <input name="Source" th:value="${mdsl}" type="hidden">
+    <input name="Target" th:value="${T(io.mdsl.web.interfaces.dto.TargetFormat).MDSL}" type="hidden">
+    <input name="SourceFileName" th:value="${mdslInputFileName}" type="hidden">
+</form>
+
+
+<!-- The modal dialog for the edit button: -->
+<form action="/load-and-show-mdsl-from-string" class="ui modal form" enctype="multipart/form-data" method="POST">
+    <input name="SourceFileName" th:value="${mdslInputFileName}" type="hidden">
+    <div class="header">Edit MDSL</div>
+    <div class="scrolling content">
+        <div class="field">
+            <label>MDSL</label>
+            <textarea style="font-family: monospace" rows="25" name="Source" th:text="${mdsl}"></textarea>
+        </div>
+    </div>
+    <div class="actions">
+        <button class="ui primary approve button" type="submit">Apply Changes</button>
+        <div class="ui cancel button">Cancel</div>
+    </div>
+</form>
+
+<form action="/transform-from-string" class="ui very padded container segment form" id="transform-from-string"
+      method="post">
+    <div th:replace="fragments/general :: navigation(active='transform')">
+    </div>
+
+    <div th:if="${message}">
+        <h2 th:text="${message}"></h2>
+    </div>
+    <div>
+        <button class="tiny ui labeled icon right floated button" form="download-mdsl" type="submit">
+            <i class="download icon"></i>Download
+        </button>
+        <div th:replace="fragments/general :: copyToClipboardButton(id='mdsl-display-area')">
+        </div>
+        <button class="tiny ui labeled icon right floated button" id="edit" type="button">
+            <i class="edit icon"></i>Edit
+        </button>
+
+        <h3 class="ui header">Input MDSL specification (<span th:text="${mdslInputFileName}"></span>):</h3>
+
+        <div th:replace="fragments/mdsl :: showMdsl(mdsl=${mdsl})">
+        </div>
+
+        <th:block th:if="${target != null}">
+            <div th:replace="fragments/general :: copyToClipboardButton(id='conversion-result-display-area')">
+            </div>
+        </th:block>
+        <h3 class="ui header" th:if="${targetFormat != null}">
+            Converted to <span th:text="${targetFormat.displayName}"></span>:
+        </h3>
+
+        <div th:replace="fragments/mdsl :: show(text=${target}, format=${targetFormat}, highlight=${highlight})"></div>
+
+        <input name="Source" th:value="${mdsl}" type="hidden">
+        <input name="SourceFileName" th:value="${mdslInputFileName}" type="hidden">
+
+        <div class="field">
+            <h3 class="ui header">Convert to:</h3>
+            <select class="ui fluid dropdown" id="Target" name="Target">
+                <option th:each="target : ${T(io.mdsl.web.interfaces.dto.TargetFormat).values()}"
+                        th:selected="${target == targetFormat}" th:text="${target.displayName}"
+                        th:if="${target} != ${T(io.mdsl.web.interfaces.dto.TargetFormat).MDSL}"
+                        th:value="${target}"></option>
+            </select>
+        </div>
+        <div class="field">
+            <label>Freemarker template (only used in Freemarker Text Template conversion):</label>
+            <input name="FreemarkerTemplate" type="file"/>
+        </div>
+        <div class="field">
+            <div class="ui buttons" style="width: 100%">
+                <button class="ui labeled icon primary button" form="transform-from-string" type="submit">
+                    <i class="sync icon"></i>Convert
+                </button>
+                <button class="ui right labeled icon button" form="download" type="submit"
+                        th:attrappend="disabled=${target == null ? 'disabled' : ''}">
+                    <i class="download icon"></i>Download conversion result
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+$("#edit").click(() => $('.ui.modal').modal('show'))
+</script>
+</body>
+</html>

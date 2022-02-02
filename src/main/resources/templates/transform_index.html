@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/general :: head"></head>
+<body style="padding-top: 3em">
+<div class="ui very padded container segment">
+
+    <div th:replace="fragments/general :: navigation(active='transform')">
+    </div>
+
+    <div th:if="${message}">
+        <h2 th:text="${message}"></h2>
+    </div>
+
+    <div>
+        <form
+                class="ui form"
+                method="POST"
+                enctype="multipart/form-data"
+                action="/transform-from-file"
+        >
+            <div class="field">
+                <label>File to convert:</label>
+                <input required type="file" name="Source"/>
+            </div>
+
+            <div class="field">
+                <label>Convert to:</label>
+                <select class="ui fluid dropdown" id="Target" name="Target">
+                    <option th:each="target : ${T(io.mdsl.web.interfaces.dto.TargetFormat).values()}"
+                            th:value="${target}" th:text="${target.displayName}"
+                            th:if="${target} != ${T(io.mdsl.web.interfaces.dto.TargetFormat).MDSL}"></option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Freemarker template (only used in Freemarker Text Template conversion):</label>
+                <input type="file" name="Template"/>
+            </div>
+
+            <button class="ui labeled icon primary button" type="submit" >
+                <i class="sync icon"></i>Convert
+            </button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

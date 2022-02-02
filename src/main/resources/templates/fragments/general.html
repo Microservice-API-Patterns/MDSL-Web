@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head">
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" th:href="@{/webjars/Semantic-UI/semantic.min.css}">
+    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script th:src="@{/webjars/Semantic-UI/semantic.min.js}"></script>
+
+    <link rel="stylesheet" th:href="@{/webjars/highlightjs/styles/github.min.css}">
+    <script th:src="@{/webjars/highlightjs/highlight.min.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            hljs.registerLanguage("mdsl", function(hljs) {
+                return {
+                    keywords: {
+                        // See https://highlightjs.readthedocs.io/en/latest/css-classes-reference.html
+                        keyword: "API IPA description data type endpoint operation provider client gateway responsibility serves as exposes offers consumes expecting delivering scenario story supports with a wants to so that via protocol binding resource at element elements parameter parameters protected reporting status error analytics by policy realized as with location and all receives event", 
+                        literal: 'header payload "GET" "PUT" "POST" "PATCH" "DELETE" "HTTP"', // not sure about this group 
+                        operator: "* + ? !",
+                        type: "ID D MD L P string int long bool raw Identifier Data Metadata Link",
+                        built_in: "PROCESSING_RESOURCE INFORMATION_HOLDER_RESOURCE COLLECTION_RESOURCE STATE_CREATION_OPERATION RETRIEVAL_OPERATION STATE_TRANSITION_OPERATION STATE_DELETION_OPERATION STATE_REPLACEMENT_OPERATION COMPUTATION_FUNCTION Pagination Wish_List Wish_Template Request_Bundle Context_Representation Request_Condition Linked_Information_Holder Embedded_Entity"
+                    },
+                    contains: [
+                        hljs.C_LINE_COMMENT_MODE,
+                        hljs.C_BLOCK_COMMENT_MODE,
+                        hljs.QUOTE_STRING_MODE
+                    ]
+                }
+            });
+            hljs.initHighlighting();
+        });
+    </script>
+
+    <title th:text="'MDSL Web Tools ' + ${@environment.getProperty('io.mdsl.web.version')}"></title>
+</head>
+<body>
+<div th:fragment="navigation (active)">
+    <h1 class="ui header">MDSL Web Tools Version <span
+            th:text="${@environment.getProperty('io.mdsl.web.version')}"></span></h1>
+
+    <div class="ui secondary pointing menu" style="margin-bottom: 2em;">
+        <a class="item" th:classappend="${active == 'analyze' ? 'active' : ''}" th:href="@{/}">
+            Elicit Requirement
+        </a>
+        <a class="item" th:classappend="${active == 'refactor' ? 'active' : ''}" th:href="@{/refactor}">
+            Refine and Refactor Design
+        </a>
+        <a class="item" th:classappend="${active == 'transform' ? 'active' : ''}" th:href="@{/transform}">
+            Generate Platform IDLs
+        </a>
+        <div class="right menu">
+            <a class="ui item" target="_blank" href="https://microservice-api-patterns.github.io/MDSL-Specification/index">
+                <i class="external alternate icon"></i>
+                MDSL Language Reference
+            </a>
+        </div>
+    </div>
+</div>
+<div th:fragment="copyToClipboardButton (id)">
+    <script>
+        function copyToClipboard(event) {
+            var id =  event.dataset.id;
+            var mdsl = document.getElementById(id);
+            navigator.clipboard.writeText(mdsl.innerText);
+        }
+    </script>
+    <button class="tiny ui labeled icon right floated button" th:data-id="${id}" onclick="copyToClipboard(this)" type="button">
+        <i class="clipboard icon"></i>Copy to Clipboard
+    </button>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+API description AnotherSampleAPI
+
+data type SampleDTO {ID, D} 
+
+endpoint type TestName1
+exposes 
+  operation testOp 
+    expecting payload D<string>  
+    delivering payload SampleDTO
+  operation getOp with responsibility RETRIEVAL_OPERATION
+    expecting payload SampleDTO
+    delivering payload {"a": SampleDTO, "b": SampleDTO}
+    
+endpoint type TestName2
+exposes 
+  operation getTest2 with responsibility RETRIEVAL_OPERATION
+    expecting payload SampleDTO
+    delivering payload {"a": SampleDTO, "b": SampleDTO}
+    
+API provider HelloWorldAPIProvider
+  offers TestName1
+
+API client HelloWorldAPIClient
+  consumes TestName1

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/general :: head"></head>
+<body style="padding-top: 3em">
+<form action="/refactor-from-string" class="ui form very padded container segment" method="post">
+    <div th:replace="fragments/general :: navigation(active='analyze')">
+    </div>
+
+    <div th:if="${message}">
+        <h2 th:text="${message}"></h2>
+    </div>
+    <div>
+        <h3 class="ui header">Input story: <span th:text="${name}"></span></h3>
+
+        <em>Actor: </em><span th:text="${who}"></span><br>
+        <em>Action: </em><span th:text="${what}"></span><br>
+        <em>Goal: </em><span th:text="${why}"></span><br>
+        <em>Objects: </em><span th:text="${objects}"></span><br>
+        
+		<h3 class="ui header">Initial MDSL specification of <span th:text="${name}"></span>:</h3>
+
+        <div th:replace="fragments/mdsl :: showMdsl(mdsl=${target})">
+        </div>
+
+        <input name="Source" th:value="${target}" type="hidden">
+
+        <button class="ui right labeled icon primary button" style="width: 100%" type="submit">
+            <i class="chevron right icon"></i>Move to API Endpoint Design
+        </button>
+
+    </div>
+</form>
+</body>
+</html>

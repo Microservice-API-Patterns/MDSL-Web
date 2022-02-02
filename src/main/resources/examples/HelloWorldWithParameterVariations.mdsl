@@ -1,0 +1,10 @@
+API description HelloWorldAPI1
+
+endpoint type HelloWorldEndpointWithParameterVariations
+exposes 
+  operation sayHelloIndirectly
+    expecting payload "identifier":ID<int>
+    delivering payload Link<string>
+  operation sayHelloBriefly 
+    expecting payload P  
+    delivering payload D

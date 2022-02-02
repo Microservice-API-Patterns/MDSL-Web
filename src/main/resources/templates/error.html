@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/general :: head"></head>
+<body style="padding-top: 3em">
+<div class="ui very padded container segment">
+    <div th:replace="fragments/general :: navigation(active='')">
+    </div>
+    <div class="ui negative message">
+        <div class="header">
+            An error has occurred
+        </div>
+        <p th:text="${message}"></p>
+        <p th:if="${report}" th:text="${report}"></p>
+    </div>
+</div>
+</body>
+</html>

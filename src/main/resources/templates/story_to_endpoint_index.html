@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head th:replace="fragments/general :: head"></head>
+<body style="padding-top: 3em">
+<div class="ui very padded container segment">
+
+    <div th:replace="fragments/general :: navigation(active='analyze')">
+    </div>
+
+    <div th:if="${message}">
+        <h2 th:text="${message}"></h2>
+    </div>
+    <div>
+        <form
+                action="/story-to-endpoint"
+                class="ui form"
+                method="POST"
+        >
+
+            <div class="inline fields">
+                <div class="five wide field">
+                    <label>A</label>
+                    <input type="text" name="Client" placeholder="persona" value="client">
+                </div>
+                <div class="five wide field">
+                    <label>wants&nbsp;to</label>
+                    <input type="text" name="Action" placeholder="action" value="doSomething">
+                </div>
+                <div class="five wide field">
+                    <label>so&nbsp;that</label>
+                    <input type="text" name="Goal" placeholder="goal" value="goal is reached.">
+                </div>
+            </div>
+
+            <div class="fields">
+                <div class="ten wide field">
+                    <label>What is the name of this story?</label>
+                    <input type="text" name="Name" placeholder="example story" value="Story1">
+                </div>
+            </div>
+            
+            <div class="fields">
+                <div class="ten wide field">
+                    <label>Does the story involve any domain entities?</label>
+                    <input type="text" name="Objects" placeholder="entity1, entity2, ...">
+                </div>
+            </div>
+
+            <button class="ui button primary" type="submit">Transform Story to MDSL</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

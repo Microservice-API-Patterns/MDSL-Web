@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div class="field" th:fragment="showMdsl(mdsl)">
+    <pre id="mdsl-display-area" style="background: unset; padding: 0;" class="ui secondary segment"><code class="language-mdsl" th:text="${mdsl}"></code></pre>
+</div>
+
+<div th:if="${text != null}"  class="field" th:fragment="show(text, format, highlight)">
+    <pre id="conversion-result-display-area" style="background: unset; padding: 0;" class="ui secondary segment"><code th:class="${highlight}" th:text="${text}"></code></pre>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+API description HelloWorldAPI
+
+endpoint type HelloWorldEndpoint
+exposes 
+  operation sayHello 
+    expecting payload D<string>  
+    delivering payload "greeting":D<string>

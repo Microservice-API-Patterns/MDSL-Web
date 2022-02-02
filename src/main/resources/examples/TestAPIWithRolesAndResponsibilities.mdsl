@@ -1,0 +1,25 @@
+API description YetAnotherSampleAPI
+
+data type SampleDTO {ID, D} 
+data type SampleDTO2 {ID<int>, "p2Wrapper":{"p2":D<string>}} 
+
+endpoint type TestName1 serves as PROCESSING_RESOURCE
+exposes 
+  operation init with responsibility STATE_CREATION_OPERATION
+    expecting payload D<void> // no payload 
+    delivering payload ID
+  operation testOp with responsibility STATE_TRANSITION_OPERATION
+    expecting payload D<string>  
+    delivering payload SampleDTO
+  operation getTest with responsibility COMPUTATION_FUNCTION 
+    expecting payload SampleDTO
+    delivering payload {"a": SampleDTO, "b": SampleDTO}
+    
+endpoint type TestName serves as INFORMATION_HOLDER_RESOURCE and COLLECTION_RESOURCE
+exposes 
+  operation getTest with responsibility RETRIEVAL_OPERATION
+    expecting payload SampleDTO
+    delivering payload {"a": SampleDTO, "b": SampleDTO}
+  operation testOp with responsibility "PUT" // HTTP verb passthrough
+    expecting payload D<string>  
+    delivering payload SampleDTO

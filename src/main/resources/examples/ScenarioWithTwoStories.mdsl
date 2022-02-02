@@ -1,0 +1,14 @@
+API description ScenarioAndStoryOnly
+
+scenario SampleIntegrationScenario
+  story ElaborateStory
+   when "something has happened" //precondition
+   a "customer and/or integrator" // role
+   wants to "doSomething" // business activity 
+   yielding "a result" // outcome
+   so that "both actors are satisfied and profit is made" // goal 
+    
+  story ShortStory
+    a API client
+    wants to CRUD "SomeBusinessObject" in "BOCollection"
+    // CRUD is short for Create, Read, Update, Delete 

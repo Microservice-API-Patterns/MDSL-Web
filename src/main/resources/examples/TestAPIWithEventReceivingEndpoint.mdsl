@@ -1,0 +1,17 @@
+// Interface refactoring 'Split Operation' applied.
+// Interface refactoring 'AddEndpointForScenario' applied.
+API description APISupportingStory1
+
+event type SampleEvent "e1": D<string> 
+
+endpoint type Story1ScenarioRealizationEndpoint supports scenario Story1Scenario
+exposes
+operation e1 expecting payload {"e1":D, <<Embedded_Entity>>"ee": {MD<string>, ID}} 
+delivering payload "doSomethingResponseBody":D<string>
+operation e2 expecting payload "e2":D delivering payload "doSomethingResponseBody":D<string>
+operation e3 expecting payload "e3":D delivering payload "doSomethingResponseBody":D<string>
+receives event SampleEvent
+
+scenario Story1Scenario
+  story Story1
+    a "client" wants to "doSomething" with "e1" and "e2" and "e3" so that "goal is reached."
