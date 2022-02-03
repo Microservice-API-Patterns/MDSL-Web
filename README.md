@@ -12,7 +12,7 @@ See [Running your application](https://docs.spring.io/spring-boot/docs/1.5.16.RE
 
 When started successfully, the application should be available at <http://localhost:8080/>. You may want to verify that it functions correctly:
 
-1. On the "Elicit Requirement" tab, click on "Transform Story to MDSL" (default value swill be used if the input forms are not filled out). The story should be diplayed.
+1. On the "Elicit Requirement" tab, click on "Transform Story to MDSL" (default values will be used if the input forms are not filled out). The story should be diplayed.
 2. Click on "Move to API Endpoint Design". The second tab "Refine and Refactor Design" should now be active. 
    * On this tab, you can continue to work with the story   
 3. Click on "Refactor/Transform" to create an endpoint type from the story from Steps 1 and 2.
