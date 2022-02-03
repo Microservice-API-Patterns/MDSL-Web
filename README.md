@@ -12,16 +12,31 @@ See [Running your application](https://docs.spring.io/spring-boot/docs/1.5.16.RE
 
 When started successfully, the application should be available at <http://localhost:8080/>. You may want to verify that it functions correctly:
 
+![](images/step1a.png)
+
 1. On the "Elicit Requirement" tab, click on "Transform Story to MDSL" (default values will be used if the input forms are not filled out). The story should be diplayed.
+
+![](images/step1b.png)
+
 2. Click on "Move to API Endpoint Design". The second tab "Refine and Refactor Design" should now be active. 
    * On this tab, you can continue to work with the story   
+
+![](images/step2.png)
+
 3. Click on "Refactor/Transform" to create an endpoint type from the story from Steps 1 and 2.
    * Alternatively, you can upload own MDSL files (for instance, one of the MDSL examples from the MDSL GitHub repository) by clicking on the tab name.
    * You can now apply other refactorings (optional).
+
+![](images/step3.png)
+   
 4. Click on "Move to IDL Generation and Download". The MDSL should still be displayed, and the third tab "Generate Platform IDLs" be highlighted. 
+
+![](images/step4.png)
+
 5. Select a target language (default: OpenAPI) and click on "Convert". Information about the various generation options is available [here](https://microservice-api-patterns.github.io/MDSL-Specification/tools).
    * If OpenAPI cannot be generated, you might need an explicit HTTP binding (see [here](https://microservice-api-patterns.github.io/MDSL-Specification/bindings#http-protocol-binding)). 
 
+![](images/step5.png)
 
 # License
 
